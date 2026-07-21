@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Custom Properties for Theme Support - Matching Portfolio */
+:root {
+  /* Light mode colors - matching portfolio */
+  --background: 98% 0.005 260;
+  --foreground: 20% 0.02 260;
+  
+  /* Primary: Electric Indigo - matching portfolio */
+  --primary: 60% 0.22 280;
+  --primary-foreground: 98% 0 0;
+  
+  --secondary: 96% 0.01 280;
+  --secondary-foreground: 30% 0.02 280;
+  
+  --muted: 96% 0.005 260;
+  --muted-foreground: 55% 0.02 260;
+  
+  --accent: 75% 0.18 85;
+  --accent-foreground: 20% 0.02 260;
+  
+  --border: 92% 0.005 260;
+  --input: 92% 0.005 260;
+  --ring: 60% 0.22 280;
+}
+
+[data-theme="dark"] {
+  /* Dark mode colors - matching portfolio */
+  --background: 12% 0.02 270;
+  --foreground: 90% 0.01 270;
+  
+  /* Primary: Electric Indigo - matching portfolio */
+  --primary: 65% 0.22 280;
+  --primary-foreground: 100% 0 0;
+  
+  --secondary: 18% 0.02 270;
+  --secondary-foreground: 80% 0.01 270;
+  
+  --muted: 18% 0.02 270;
+  --muted-foreground: 70% 0.01 270;
+  
+  --accent: 75% 0.18 85;
+  --accent-foreground: 12% 0.02 270;
+  
+  --border: 22% 0.02 270;
+  --input: 22% 0.02 270;
+  --ring: 65% 0.22 280;
+}
+
+/* Custom nav-link class matching portfolio */
+@layer components {
+  .nav-link {
+    @apply font-mono text-secondary transition-colors duration-300 hover:text-primary;
+  }
+}
+

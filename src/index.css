@@ -1,0 +1,192 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Deep Obsidian Theme - OKLCH */
+    /* Base Backgrounds */
+    --background: 98% 0.005 260;
+    --foreground: 20% 0.02 260;
+
+    --card: 100% 0 0;
+    --card-foreground: 20% 0.02 260;
+
+    --popover: 100% 0 0;
+    --popover-foreground: 20% 0.02 260;
+
+    /* Primary: Electric Indigo */
+    --primary: 60% 0.22 280;
+    --primary-foreground: 98% 0 0;
+
+    /* Secondary: Soft Lavender Grey */
+    --secondary: 96% 0.01 280;
+    --secondary-foreground: 30% 0.02 280;
+
+    /* Muted */
+    --muted: 96% 0.005 260;
+    --muted-foreground: 55% 0.02 260;
+
+    /* Accent: Sharp Electric Ochre for specialized highlights */
+    --accent: 75% 0.18 85; 
+    --accent-foreground: 20% 0.02 260;
+
+    --destructive: 65% 0.2 25;
+    --destructive-foreground: 98% 0 0;
+
+    --border: 92% 0.005 260;
+    --input: 92% 0.005 260;
+    --ring: 60% 0.22 280;
+
+    --radius: 0rem; /* Sharp corners for a technical/editorial feel */
+
+    /* Git branch colors - Adjusted for Oklch */
+    --branch-main: 60% 0.22 280; /* Indigo */
+    --branch-feature: 70% 0.15 150; /* Emerald */
+    --branch-develop: 65% 0.18 300; /* Magenta */
+    --branch-hotfix: 70% 0.18 40; /* Orange */
+    --commit-dot: 60% 0.22 280;
+
+    /* Sidebar */
+    --sidebar-background: 98% 0.005 260;
+    --sidebar-foreground: 40% 0.02 260;
+    --sidebar-primary: 60% 0.22 280;
+    --sidebar-primary-foreground: 98% 0 0;
+    --sidebar-accent: 96% 0.01 280;
+    --sidebar-accent-foreground: 20% 0.02 260;
+    --sidebar-border: 92% 0.005 260;
+    --sidebar-ring: 60% 0.22 280;
+  }
+
+  .dark {
+    /* Deep Obsidian Dark Mode */
+    --background: 12% 0.02 270; /* Deep slightly purple-ish black */
+    --foreground: 90% 0.01 270;
+
+    --card: 16% 0.02 270;
+    --card-foreground: 90% 0.01 270;
+
+    --popover: 16% 0.02 270;
+    --popover-foreground: 90% 0.01 270;
+
+    /* Primary: Electric Indigo */
+    --primary: 65% 0.22 280;
+    --primary-foreground: 100% 0 0;
+
+    /* Secondary */
+    --secondary: 18% 0.02 270;
+    --secondary-foreground: 80% 0.01 270;
+
+    /* Muted */
+    --muted: 18% 0.02 270;
+    --muted-foreground: 70% 0.01 270;
+
+    /* Accent */
+    --accent: 75% 0.18 85;
+    --accent-foreground: 12% 0.02 270;
+
+    --destructive: 65% 0.22 25;
+    --destructive-foreground: 100% 0 0;
+
+    --border: 22% 0.02 270;
+    --input: 22% 0.02 270;
+    --ring: 65% 0.22 280;
+
+    /* Git branch colors */
+    --branch-main: 70% 0.22 280;
+    --branch-feature: 75% 0.15 150;
+    --branch-develop: 70% 0.18 300;
+    --branch-hotfix: 75% 0.18 40;
+    --commit-dot: 70% 0.22 280;
+
+    --sidebar-background: 14% 0.02 270;
+    --sidebar-foreground: 80% 0.01 270;
+    --sidebar-primary: 65% 0.22 280;
+    --sidebar-primary-foreground: 100% 0 0;
+    --sidebar-accent: 18% 0.02 270;
+    --sidebar-accent-foreground: 90% 0.01 270;
+    --sidebar-border: 22% 0.02 270;
+    --sidebar-ring: 65% 0.22 280;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased selection:bg-primary selection:text-primary-foreground;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight font-bold;
+  }
+}
+
+@layer components {
+  /* Editorial Typography Utils */
+  .text-display {
+    @apply font-sans font-extrabold tracking-tighter;
+  }
+
+  .font-mono-nav {
+    @apply font-mono text-sm tracking-tight uppercase;
+  }
+
+  .nav-link {
+    @apply font-mono-nav text-muted-foreground hover:text-primary transition-colors duration-300;
+  }
+
+  .nav-link-active {
+    @apply font-mono-nav text-primary border-b-2 border-primary;
+  }
+
+  /* Git branch line styles - Refined */
+  .branch-line {
+    @apply absolute left-6 top-0 bottom-0 w-px bg-border;
+  }
+
+  .commit-node {
+    @apply absolute left-[21px] w-3 h-3 rounded-full border-2 border-primary bg-background z-10 transition-all duration-300;
+  }
+
+  .commit-node-active {
+    @apply bg-primary scale-125 shadow-[0_0_15px_-3px_var(--primary)];
+  }
+
+  .branch-connector {
+    @apply absolute left-[23px] w-8 h-px bg-border;
+  }
+
+  /* Skill tags - Minimalist */
+  .skill-tag {
+    @apply px-3 py-1 text-xs font-mono border border-border bg-secondary hover:border-primary hover:text-primary transition-colors duration-300 cursor-default;
+  }
+
+  /* Section headers - Editorial */
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold mb-10 text-display;
+  }
+
+  /* Card hover effect */
+  .card-hover {
+    @apply transition-all duration-300;
+  }
+
+  .card-hover:hover {
+    @apply -translate-y-1 scale-[1.01] border-primary shadow-[0_8px_30px_rgb(0,0,0,0.12)];
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
