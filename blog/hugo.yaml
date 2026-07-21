@@ -9,6 +9,7 @@ enableRobotsTXT: true
 buildDrafts: false
 buildFuture: false
 buildExpired: false
+publishDir: ../dist/blog
 
 params:
   env: production
