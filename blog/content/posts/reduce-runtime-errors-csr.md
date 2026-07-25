@@ -5,7 +5,7 @@ date: 2026-07-25T11:24:16+06:00
 # aliases: ["/first"]
 tags: ["jq", "sed", "sqlite", "bash"]
 draft: true
-description: "Reducing integration headache with NSwag
+description: "Reducing integration headache with NSwag"
 # canonicalURL: "https://canonical.url/to/page"
 cover:
     image: "<image path/url>" # image path/url
