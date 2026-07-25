@@ -5,7 +5,7 @@ date: 2024-10-22T19:25:07+06:00
 # aliases: ["/first"]
 tags: ["jq", "sed", "sqlite", "bash"]
 draft: false
-description: "How I've set up a personal quote database locally for my lockscreen."
+description: "Personal quote database locally for my lockscreen."
 # canonicalURL: "https://canonical.url/to/page"
 cover:
     image: "<image path/url>" # image path/url
