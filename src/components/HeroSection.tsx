@@ -1,7 +1,7 @@
 import anime from "animejs";
 import { Facebook, FileText, Github, Linkedin, Mail } from "lucide-react";
 import { useEffect, useRef } from "react";
-import resumePdf from "../assets/Jahangir-Alam.pdf";
+import resumePdf from "../assets/Md_Jahangir_Alam_Resume_2026-07-27.pdf";
 
 const socialLinks = [
   { icon: Linkedin, href: "https://www.linkedin.com/in/jahangir1x/", label: "LinkedIn" },

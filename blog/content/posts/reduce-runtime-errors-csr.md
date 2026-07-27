@@ -24,12 +24,19 @@ How it works is that we will generate openapi specification from backend and the
 
 Example Simple API:
 ```csharp
-[ProducesResponseType(typeof(List<double>), StatusCodes.Status200OK)]
+public sealed record PersonDto(
+    Guid Id,
+    string FirstName,
+    string LastName,
+    string Email
+);
+
+[ProducesResponseType(typeof(PersonDto), StatusCodes.Status200OK)]
 // Other ProducesResponseType attributes can exist too
-[HttpGet("denominations", Name = nameof(GetVoucherDenominations))]
-public async Task<ActionResult<List<double>>> GetVoucherDenominations([FromQuery] List<int> merchantIds)
+[HttpGet("person", Name = nameof(GetPerson))]
+public async Task<ActionResult<PersonDto>> GetPerson([FromQuery] Guid personId)
 {
-    var queryResult = SomeService.GetVoucherDenominations(merchantIds);
+    var queryResult = SomeService.GetPerson(personId);
     return Ok(queryResult);
 }
 ```
