@@ -3,7 +3,7 @@ title: 'You are too slow in code navigation'
 date: 2026-08-08T11:24:16+06:00
 tags: ["navigation", "productivity", "developer-tools"]
 draft: true
-description: "Slow navigation while coding'
+description: "Slow navigation while coding"
 cover:
     relative: false
     hidden: true
