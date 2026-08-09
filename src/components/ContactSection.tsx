@@ -17,7 +17,7 @@ const ContactSection = () => {
           {/* Contact methods */}
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
             <a
-              href="mailto:hello@jarx64.com"
+              href="mailto:jahangir64r@gmail.com"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
             >
               <Mail className="w-5 h-5" />

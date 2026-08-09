@@ -5,11 +5,11 @@ import ThemeToggle from "./ThemeToggle";
 const navLinks = [
   { href: "/blog", label: "~/blog" },
 
-  { href: "#experience", label: "./experience" },
-  { href: "#projects", label: "./projects" },
-  { href: "#skills", label: "./skills" },
-  { href: "#education", label: "./education" },
-  { href: "#contact", label: "./contact" },
+  { href: "#experience", label: "#experience" },
+  { href: "#projects", label: "#projects" },
+  { href: "#skills", label: "#skills" },
+  { href: "#education", label: "#education" },
+  { href: "#contact", label: "#contact" },
 ];
 
 const Header = () => {

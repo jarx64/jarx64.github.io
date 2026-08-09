@@ -45,7 +45,7 @@ params:
     safari_pinned_tab: "<link / abs url>"
 
   label:
-    text: "Home"
+    text: "~/"
 
   # profile-mode
   profileMode:
@@ -73,7 +73,7 @@ params:
     - name: github
       url: "https://github.com/jarx64"
     - name: email
-      url: "mailto:hello@jarx64.com"
+      url: "mailto:jahangir64r@gmail.com"
     - name: facebook
       url: "https://facebook.com/rocky10x"
 

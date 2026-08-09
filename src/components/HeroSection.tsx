@@ -6,7 +6,7 @@ import resumePdf from "../assets/Md_Jahangir_Alam_Resume_2026-07-27.pdf";
 const socialLinks = [
   { icon: Linkedin, href: "https://www.linkedin.com/in/jahangir1x/", label: "LinkedIn" },
   { icon: Github, href: "https://github.com/jarx64", label: "GitHub" },
-  { icon: Mail, href: "mailto:hello@jarx64.com", label: "Email" },
+  { icon: Mail, href: "mailto:jahangir64r@gmail.com", label: "Email" },
   { icon: Facebook, href: "https://www.facebook.com/rocky10x", label: "Facebook" },
 ];
 
