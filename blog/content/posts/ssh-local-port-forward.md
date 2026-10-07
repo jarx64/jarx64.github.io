@@ -40,6 +40,7 @@ I ran this command on my local machine:
 
 ```bash
 ssh -N \
+  -i key.pem \
   -L 127.0.0.1:11433:2.2.2.2:1433 \
   -o ExitOnForwardFailure=yes \
   -o ServerAliveInterval=30 \
@@ -50,7 +51,7 @@ ssh -N \
 Replace `username` with the VPS SSH account. This example assumes SQL Server listens on TCP port `1433`; use its actual port if different. The multiline command uses Bash syntax. In PowerShell or Command Prompt, run it on one line:
 
 ```text
-ssh -N -L 127.0.0.1:11433:2.2.2.2:1433 -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=3 username@1.1.1.1
+ssh -N -i key.pem -L 127.0.0.1:11433:2.2.2.2:1433 -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=3 username@1.1.1.1
 ```
 
 The tunnel listens on `127.0.0.1:11433` on my machine. Whenever a local tool connects to that address, SSH carries the connection to the VPS, which opens a TCP connection to `2.2.2.2:1433`.
@@ -73,6 +74,7 @@ The database sees the VPS's outbound IP, `1.1.1.1`, rather than my local network
 | Option | Purpose |
 |---|---|
 | `-N` | Runs the tunnel without executing a remote command or opening a shell. |
+| `-i key.pem` | Uses `key.pem` as the SSH private key. |
 | `-L 127.0.0.1:11433:2.2.2.2:1433` | Forwards local port `11433` to the database's port `1433` through the VPS. Binding to `127.0.0.1` limits access to my machine. |
 | `-o ExitOnForwardFailure=yes` | Exits if the forwarding listener cannot be set up, such as when local port `11433` is occupied. It does not verify database reachability. |
 | `-o ServerAliveInterval=30` | Sends an SSH liveness check after 30 seconds without receiving data from the SSH server. |
