@@ -7,7 +7,7 @@ const socialLinks = [
   { icon: Linkedin, href: "https://www.linkedin.com/in/jahangir1x/", label: "LinkedIn" },
   { icon: Github, href: "https://github.com/jarx64", label: "GitHub" },
   { icon: Mail, href: "mailto:jahangir64r@gmail.com", label: "Email" },
-  { icon: Facebook, href: "https://www.facebook.com/rocky10x", label: "Facebook" },
+  { icon: Facebook, href: "https://www.facebook.com/jarx64", label: "Facebook" },
 ];
 
 const HeroSection = () => {
