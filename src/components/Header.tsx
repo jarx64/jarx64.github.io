@@ -30,13 +30,18 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo & Blog */}
           <div className="flex items-center gap-8">
-            <a href="/" className="font-mono font-bold text-xl tracking-tighter text-primary hover:text-primary/80 transition-colors">
+            {/* <a href="/" className="font-mono font-bold text-xl tracking-tighter text-primary hover:text-primary/80 transition-colors"> */}
+            <a 
+              href="/" 
+              className="hidden md:inline-flex items-center justify-center px-4 py-1.5 text-xs font-mono font-bold text-primary-foreground bg-primary border border-transparent rounded-full hover:bg-primary/90 hover:scale-105 hover:shadow-[0_0_15px_rgba(var(--primary),0.5)] transition-all duration-300 transform"
+            >
               ~/
             </a>
-            <a 
+            {/* <a 
               href="/blog" 
               className="hidden md:inline-flex items-center justify-center px-4 py-1.5 text-xs font-mono font-medium text-primary-foreground bg-primary border border-transparent rounded-full hover:bg-primary/90 hover:scale-105 hover:shadow-[0_0_15px_rgba(var(--primary),0.5)] transition-all duration-300 transform"
-            >
+            > */}
+            <a href="/blog" className="font-mono font-bold text-xs tracking-tighter text-primary hover:text-primary/80 transition-colors">
               ~/blog
             </a>
           </div>
