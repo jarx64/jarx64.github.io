@@ -114,6 +114,22 @@ If certificate validation fails because the client connects to `127.0.0.1`, conf
 
 My local tool then worked through the tunnel, with the database connection originating from the whitelisted VPS.
 
+## Accessing other private services
+
+Local port forwarding is not limited to databases. It can expose any TCP service that the SSH server can reach. For example, if RabbitMQ's management dashboard is listening on port `15672` of the remote server, I can forward it to local port `15673`:
+
+```bash
+ssh -N \
+  -L 127.0.0.1:15673:localhost:15672 \
+  -i my-key.pem \
+  -o ExitOnForwardFailure=yes \
+  -o ServerAliveInterval=30 \
+  -o ServerAliveCountMax=3 \
+  ubuntu@3.1.121.148
+```
+
+Here, `localhost:15672` is resolved from the remote server's point of view. While the tunnel is running, I can open `http://127.0.0.1:15673` in a local browser and sign in with the usual RabbitMQ credentials. The dashboard remains bound to the remote server and does not need to be exposed publicly.
+
 ## References
 
 - [OpenSSH manual: local port forwarding and SSH options](https://man.openbsd.org/ssh)
