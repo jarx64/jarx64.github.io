@@ -10,8 +10,8 @@ const experiences = [
     title: "Software Engineer",
     subtitle: "Inument · Full-time · On-site",
     description:
-      "Working with CQRS, MediatR, Clean Architecture, and MSSQL in a financial domain. Analyzed SQL Server execution plans and designed appropriate indexing strategies to improve query performance by >95%. Built a scheduled background reporting system to generate and distribute sales reports automatically.",
-    tags: ["ASP.NET Core", "CQRS", "MediatR", "MSSQL", "Clean Architecture"],
+      "Developing and optimizing enterprise financial applications using ASP.NET Core, SQL Server, Angular, and React. Contributing to backend modernization, database performance optimization, automated reporting, secure system integrations, and API client generation. Collaborating on production migrations and building scalable, maintainable solutions using Clean Architecture and CQRS.",
+    tags: ["ASP.NET Core", "CQRS", "MediatR", "MSSQL", "Hangfire", "Angular", "React", "REST APIs", "Database Optimization"],
     link: { url: "https://inument.com/", label: "inument.com" },
   },
   {
@@ -20,8 +20,8 @@ const experiences = [
     title: "Software Engineer",
     subtitle: "Inument · Part-time · Remote",
     description:
-      "Developed and maintained scalable web applications using ASP.NET Core and Angular. Designed and implemented RESTful APIs and integrated them with front-end components.",
-    tags: ["ASP.NET Core", "Angular", "REST APIs"],
+      "Contributed to production backend development using ASP.NET Core, Hangfire, and Clean Architecture. Developed a configurable job scheduling system for automated digital asset distribution with execution tracking and monitoring.",
+    tags: ["ASP.NET Core", "Angular", "REST APIs", "Background Jobs"],
     link: { url: "https://inument.com/", label: "inument.com" },
   },
   {
@@ -30,8 +30,8 @@ const experiences = [
     title: "Backend Developer Intern",
     subtitle: "Vivasoft Limited · Internship · Rajshahi, Bangladesh",
     description:
-      "Completed Weekdemy 1.0 backend development program. Worked with Go frameworks (Echo, Gin, GORM). Developed a stress-testing program using Resty framework and built a CSV data import tool for mass user data loading.",
-    tags: ["Go", "Echo", "Gin", "GORM", "Git"],
+      "Completed a backend development program focused on Go, Echo, and GORM. Developed a CSV-based bulk data import tool to parse and efficiently load large volumes of user records into a product database, streamlining data ingestion workflows.",
+    tags: ["Go", "Echo", "Gin", "GORM", "CSV Parsing", "Database Operations"],
     link: { url: "https://vivasoftltd.com/", label: "vivasoftltd.com" },
   },
 ];
