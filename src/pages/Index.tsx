@@ -3,6 +3,7 @@ import HeroSection from "@/components/HeroSection";
 import GitFlowSection from "@/components/GitFlowSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 const Index = () => {
   return (
@@ -14,6 +15,7 @@ const Index = () => {
         <ContactSection />
       </main>
       <Footer />
+      <ScrollToTopButton />
     </div>
   );
 };
