@@ -199,14 +199,14 @@ const HandleTooltip = () => {
           id="handle-tooltip"
           role="tooltip"
           aria-live="polite"
-          className="relative block w-[min(22rem,calc(100vw-2rem))] origin-bottom rounded-xl border-2 border-primary bg-card px-5 py-4 text-card-foreground opacity-0 shadow-[0_24px_80px_-14px_rgba(0,0,0,0.9)] ring-4 ring-background"
+          className="handle-tooltip-glass relative block w-[min(22rem,calc(100vw-2rem))] origin-bottom rounded-xl border-2 border-primary px-5 py-4 text-card-foreground opacity-0 shadow-[0_24px_80px_-14px_rgba(0,0,0,0.9)] ring-4 ring-background"
         >
           <span
             className="absolute left-2 right-2 top-0 h-1 rounded-b-full bg-gradient-to-r from-primary via-accent to-primary"
             aria-hidden="true"
           />
           <span
-            className="absolute -bottom-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 border-b-2 border-r-2 border-primary bg-card"
+            className="handle-tooltip-arrow absolute -bottom-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 border-b-2 border-r-2 border-primary"
             aria-hidden="true"
           />
           <span className="relative flex min-h-7 items-baseline justify-center whitespace-nowrap font-mono text-base font-semibold sm:text-lg">
