@@ -1,6 +1,6 @@
 import anime from "animejs";
 import { Facebook, FileText, Github, Linkedin, Mail } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import resumePdf from "../assets/Md_Jahangir_Alam__2026-10-25.pdf";
 
 const socialLinks = [
@@ -11,12 +11,17 @@ const socialLinks = [
 ];
 
 const HeroSection = () => {
-  const nameRef = useRef<HTMLHeadingElement>(null);
-
   useEffect(() => {
+    const heroElements = '.hero-text-element';
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      anime.set(heroElements, { opacity: 1, translateY: 0 });
+      return;
+    }
+
     // Text Reveal Animation
     anime({
-      targets: '.hero-text-element',
+      targets: heroElements,
       translateY: [20, 0],
       opacity: [0, 1],
       duration: 800,
@@ -28,25 +33,35 @@ const HeroSection = () => {
   return (
     <section id="about" className="min-h-[90vh] flex items-center pt-24 pb-12 overflow-hidden">
       <div className="container mx-auto px-6 md:px-12">
-        <div className="flex flex-col items-center justify-center text-center max-w-4xl mx-auto space-y-12">
+        <div className="flex flex-col items-center justify-center text-center max-w-5xl mx-auto space-y-12">
           
-          <div className="space-y-8 w-full">
+          <div className="space-y-10 w-full">
             {/* Intro */}
-            <div className="space-y-6 flex flex-col items-center">
-              <h1 className="text-6xl md:text-8xl font-bold leading-[0.9] tracking-tighter text-foreground hero-text-element opacity-0">
+            <div className="flex flex-col items-center">
+              <h1 className="text-5xl sm:text-6xl md:text-8xl font-bold leading-[0.92] tracking-tighter text-balance text-foreground hero-text-element opacity-0">
                 Jahangir Alam Rocky
               </h1>
-              <div className="h-1 w-full bg-primary hero-text-element opacity-0"></div>
+
+              <div className="mt-6 flex w-full max-w-xl items-center gap-4 sm:gap-6 hero-text-element opacity-0" aria-label="Online handle: jarx64">
+                <span className="h-px flex-1 bg-gradient-to-r from-transparent to-primary/50" aria-hidden="true" />
+                <span className="rounded-full border border-primary/30 bg-primary/10 px-5 py-2 font-mono text-xl sm:text-2xl font-semibold tracking-tight text-primary shadow-[0_0_32px_-12px_oklch(var(--primary))]">
+                  @jarx64
+                </span>
+                <span className="h-px flex-1 bg-gradient-to-l from-transparent to-primary/50" aria-hidden="true" />
+              </div>
+
+              <p className="mt-5 font-mono text-xs sm:text-sm font-medium uppercase tracking-[0.24em] text-muted-foreground hero-text-element opacity-0">
+                Software Engineer
+              </p>
             </div>
 
-            {/* Role & Description */}
-            <div className="max-w-2xl mx-auto">
-              <p className="text-xl md:text-2xl font-light text-muted-foreground leading-relaxed text-balance hero-text-element opacity-0">
-                Backend Application Developer<br />
+            {/* Description */}
+            <div className="max-w-2xl mx-auto space-y-5">
+              <p className="text-xl sm:text-2xl md:text-3xl font-light text-muted-foreground leading-snug text-balance hero-text-element opacity-0">
                 Crafting scalable systems in <span className="text-foreground font-medium">.NET</span> and <span className="text-foreground font-medium">Go</span>.
               </p>
               
-              <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-mono text-muted-foreground/80 hero-text-element opacity-0">
+              <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-mono text-muted-foreground/80 hero-text-element opacity-0">
                 <span>Dhaka, Bangladesh</span>
               </div>
             </div>
