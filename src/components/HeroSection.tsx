@@ -15,20 +15,14 @@ const nameCollapseFrames = [
   "Jahangi Alam Rocky",
   "Jahang Alam Rocky",
   "Jahan Alam Rocky",
-  "Jaha Alam Rocky",
-  "Jah Alam Rocky",
-  "Ja Alam Rocky",
-  "J Alam Rocky",
-  "j Alam Rocky",
-  "j Ala Rocky",
-  "j Al Rocky",
-  "j A Rocky",
-  "j a Rocky",
-  "j a Rock",
-  "j a Roc",
-  "j a Ro",
+  "Jaha Alam Rock",
+  "Jah Ala Roc",
+  "Ja Al Ro",
+  "J A R",
+  "j A R",
   "j a R",
   "j a r",
+  "ja r",
   "jar",
 ];
 
@@ -222,7 +216,7 @@ const HandleTooltip = () => {
             ref={jokeRef}
             className="relative mt-2 block border-t border-dashed border-border pt-2 font-sans text-xs font-medium italic leading-relaxed text-muted-foreground sm:text-sm"
           >
-            Not to be confused with Java Archive (JAR) files!
+            Not to be confused with Java™ Archive (JAR) files!
           </span>
         </span>
       </span>
