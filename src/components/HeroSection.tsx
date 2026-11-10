@@ -1,7 +1,10 @@
 import anime from "animejs";
 import { Facebook, FileText, Github, Linkedin, Mail } from "lucide-react";
-import { useCallback, useEffect, useRef } from "react";
-import resumePdf from "../assets/Jahangir_Alam__2026-10-25.pdf";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+type AppConfig = {
+  resumePdf: string;
+};
 
 const socialLinks = [
   { icon: Linkedin, href: "https://www.linkedin.com/in/jahangir1x/", label: "LinkedIn" },
@@ -225,6 +228,40 @@ const HandleTooltip = () => {
 };
 
 const HeroSection = () => {
+  const [resumePdf, setResumePdf] = useState<string | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadConfig = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.BASE_URL}config.json`, {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to load config: ${response.status}`);
+        }
+
+        const config = (await response.json()) as AppConfig;
+
+        if (typeof config.resumePdf !== "string" || !config.resumePdf.trim()) {
+          throw new Error("config.json must contain a non-empty resumePdf path");
+        }
+
+        setResumePdf(config.resumePdf);
+      } catch (error) {
+        if (!(error instanceof DOMException && error.name === "AbortError")) {
+          console.error("Unable to load resume path from config.json", error);
+        }
+      }
+    };
+
+    loadConfig();
+
+    return () => controller.abort();
+  }, []);
+
   useEffect(() => {
     const heroElements = '.hero-text-element';
 
@@ -290,9 +327,13 @@ const HeroSection = () => {
             {/* Resume Button */}
             <div className="flex justify-center pt-2 hero-text-element opacity-0">
               <a 
-                href={resumePdf}
+                href={resumePdf ?? undefined}
                 download="Jahangir_Alam_Resume.pdf"
-                className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground border border-transparent rounded-full font-mono text-sm font-medium hover:bg-primary/90 hover:scale-105 hover:shadow-[0_0_15px_rgba(var(--primary),0.5)] transition-all duration-300 transform"
+                aria-disabled={!resumePdf}
+                onClick={(event) => {
+                  if (!resumePdf) event.preventDefault();
+                }}
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground border border-transparent rounded-full font-mono text-sm font-medium hover:bg-primary/90 hover:scale-105 hover:shadow-[0_0_15px_rgba(var(--primary),0.5)] transition-all duration-300 transform aria-disabled:cursor-not-allowed aria-disabled:opacity-60"
               >
                 <FileText className="w-4 h-4" />
                 Download Resume
