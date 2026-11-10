@@ -56,17 +56,27 @@ jobs:
           fi
 
           source_pdf="${uploaded_pdfs[0]}"
-          resume_name="Jahangir_Alam__$(date +%F).pdf"
+          resume_name="Jahangir_Alam__$(date +'%F_%H-%M-%S-%3N').pdf"
           target_pdf="public/resume/${resume_name}"
 
+          echo "Generated resume filename: ${resume_name}"
+          echo "Resume destination: ${target_pdf}"
+
           if [[ "${source_pdf}" != "${target_pdf}" ]]; then
-            mv -f -- "${source_pdf}" "${target_pdf}"
+            if [[ -e "${target_pdf}" ]]; then
+              echo "Refusing to overwrite existing resume: ${target_pdf}" >&2
+              exit 1
+            fi
+
+            echo "Renaming ${source_pdf} to ${target_pdf}"
+            mv -- "${source_pdf}" "${target_pdf}"
           fi
 
           config_tmp="$(mktemp)"
           jq --arg path "/resume/${resume_name}" \
             '.resumePdf = $path' public/config.json > "${config_tmp}"
           mv -- "${config_tmp}" public/config.json
+          echo "Updated resumePdf to /resume/${resume_name}"
 
       - name: Commit and push changes
         run: |
