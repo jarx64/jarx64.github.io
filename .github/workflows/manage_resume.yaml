@@ -1,0 +1,90 @@
+name: Manage resume upload
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'public/resume/*.pdf'
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: manage-resume-main
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  update-resume:
+    name: Normalize and publish resume
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Rename PDF and update config
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.sha }}
+          TZ: Asia/Dhaka
+        run: |
+          set -euo pipefail
+
+          mapfile -d '' -t uploaded_pdfs < <(
+            git diff --name-only -z --diff-filter=AM "${BEFORE_SHA}" "${AFTER_SHA}" -- \
+              'public/resume/*.pdf'
+          )
+
+          if (( ${#uploaded_pdfs[@]} == 0 )); then
+            echo "No added or modified PDF was found in public/resume." >&2
+            exit 1
+          fi
+
+          if (( ${#uploaded_pdfs[@]} > 1 )); then
+            echo "Upload one resume PDF at a time. Found:" >&2
+            printf '  %s\n' "${uploaded_pdfs[@]}" >&2
+            exit 1
+          fi
+
+          source_pdf="${uploaded_pdfs[0]}"
+          resume_name="Jahangir_Alam__$(date +%F).pdf"
+          target_pdf="public/resume/${resume_name}"
+
+          if [[ "${source_pdf}" != "${target_pdf}" ]]; then
+            mv -f -- "${source_pdf}" "${target_pdf}"
+          fi
+
+          config_tmp="$(mktemp)"
+          jq --arg path "/resume/${resume_name}" \
+            '.resumePdf = $path' public/config.json > "${config_tmp}"
+          mv -- "${config_tmp}" public/config.json
+
+      - name: Commit and push changes
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all -- public/resume public/config.json
+
+          if git diff --cached --quiet; then
+            echo "No normalization changes are needed."
+            exit 0
+          fi
+
+          git commit -m "Update resume for $(TZ=Asia/Dhaka date +%F)"
+          git push origin HEAD:main
+
+      - name: Trigger site build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run build_site.yaml --ref main
