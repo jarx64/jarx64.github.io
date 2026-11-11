@@ -2,6 +2,8 @@ import anime from "animejs";
 import { Facebook, FileText, Github, Linkedin, Mail } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { useMagneticElement } from "@/hooks/use-magnetic-element";
+
 type AppConfig = {
   resumePdf: string;
 };
@@ -39,6 +41,8 @@ const nameCollapseFrames = [
 ];
 
 const HandleTooltip = () => {
+  const handleRef = useRef<HTMLSpanElement>(null);
+  const handleLabelRef = useRef<HTMLSpanElement>(null);
   const tooltipRef = useRef<HTMLSpanElement>(null);
   const handleTextRef = useRef<HTMLSpanElement>(null);
   const suffixRef = useRef<HTMLSpanElement>(null);
@@ -46,6 +50,8 @@ const HandleTooltip = () => {
   const jokeRef = useRef<HTMLSpanElement>(null);
   const runRef = useRef(0);
   const timelineRef = useRef<ReturnType<typeof anime.timeline> | null>(null);
+
+  useMagneticElement(handleRef, handleLabelRef);
 
   const resetTooltip = useCallback(() => {
     if (handleTextRef.current) {
@@ -69,17 +75,17 @@ const HandleTooltip = () => {
   }, []);
 
   useEffect(() => {
+    const tooltip = tooltipRef.current;
+    const suffix = suffixRef.current;
+    const at = atRef.current;
+    const joke = jokeRef.current;
+
     resetTooltip();
 
     return () => {
       runRef.current += 1;
       timelineRef.current?.pause();
-      anime.remove([
-        tooltipRef.current,
-        suffixRef.current,
-        atRef.current,
-        jokeRef.current,
-      ]);
+      anime.remove([tooltip, suffix, at, joke]);
     };
   }, [resetTooltip]);
 
@@ -192,11 +198,12 @@ const HandleTooltip = () => {
       onBlur={hideTooltip}
     >
       <span
-        className="cursor-help rounded-full border border-primary/30 bg-primary/10 px-5 py-2 font-mono text-xl font-semibold tracking-tight text-primary shadow-[0_0_32px_-12px_oklch(var(--primary))] outline-none transition-colors hover:border-primary/60 hover:bg-primary/15 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-2xl"
+        ref={handleRef}
+        className="inline-flex cursor-help rounded-full border border-primary/30 bg-primary/10 px-5 py-2 font-mono text-xl font-semibold tracking-tight text-primary shadow-[0_0_32px_-12px_oklch(var(--primary))] outline-none transition-colors hover:border-primary/60 hover:bg-primary/15 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-2xl"
         tabIndex={0}
         aria-describedby="handle-tooltip"
       >
-        @jarx64
+        <span ref={handleLabelRef}>@jarx64</span>
       </span>
 
       <span className="pointer-events-none absolute bottom-[calc(100%+14px)] left-1/2 z-30 -translate-x-1/2">
@@ -238,9 +245,13 @@ const HandleTooltip = () => {
 
 const HeroSection = () => {
   const [resumePdf, setResumePdf] = useState<string | null>(null);
+  const resumeButtonRef = useRef<HTMLSpanElement>(null);
+  const resumeButtonContentRef = useRef<HTMLSpanElement>(null);
   const resumeDownloadFilename = resumePdf
     ? getResumeDownloadFilename(resumePdf)
     : undefined;
+
+  useMagneticElement(resumeButtonRef, resumeButtonContentRef);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -322,34 +333,38 @@ const HeroSection = () => {
                 Crafting scalable systems in <span className="text-foreground font-medium">.NET</span> and <span className="text-foreground font-medium">Go</span>.
               </p>
               
-              <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-mono text-muted-foreground/80 hero-text-element opacity-0">
+              {/* <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-mono text-muted-foreground/80 hero-text-element opacity-0">
                 <span>Dhaka, Bangladesh</span>
-              </div>
+              </div> */}
             </div>
 
             {/* Focus tags - Minimal */}
-            <div className="flex flex-wrap justify-center gap-2 pt-2 hero-text-element opacity-0">
+            {/* <div className="flex flex-wrap justify-center gap-2 pt-2 hero-text-element opacity-0">
               {[".NET", "Go", "Node.js", "OSS"].map((tech) => (
                 <span key={tech} className="skill-tag translate-y-0 text-primary/80 border-primary/20">
                   {tech}
                 </span>
               ))}
-            </div>
+            </div> */}
 
             {/* Resume Button */}
             <div className="flex justify-center pt-2 hero-text-element opacity-0">
-              <a 
-                href={resumePdf ?? undefined}
-                download={resumeDownloadFilename}
-                aria-disabled={!resumePdf}
-                onClick={(event) => {
-                  if (!resumePdf) event.preventDefault();
-                }}
-                className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground border border-transparent rounded-full font-mono text-sm font-medium hover:bg-primary/90 hover:scale-105 hover:shadow-[0_0_15px_rgba(var(--primary),0.5)] transition-all duration-300 transform aria-disabled:cursor-not-allowed aria-disabled:opacity-60"
-              >
-                <FileText className="w-4 h-4" />
-                Download Resume
-              </a>
+              <span ref={resumeButtonRef} className="inline-flex">
+                <a
+                  href={resumePdf ?? undefined}
+                  download={resumeDownloadFilename}
+                  aria-disabled={!resumePdf}
+                  onClick={(event) => {
+                    if (!resumePdf) event.preventDefault();
+                  }}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground border border-transparent rounded-full font-mono text-sm font-medium hover:bg-primary/90 hover:scale-105 hover:shadow-[0_0_15px_rgba(var(--primary),0.5)] transition-all duration-300 transform aria-disabled:cursor-not-allowed aria-disabled:opacity-60"
+                >
+                  <span ref={resumeButtonContentRef} className="inline-flex items-center gap-2">
+                    <FileText className="w-4 h-4" />
+                    Download Resume
+                  </span>
+                </a>
+              </span>
             </div>
 
             {/* Social Links - Minimal text/icon mix */}
