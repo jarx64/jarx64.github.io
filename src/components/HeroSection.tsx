@@ -6,6 +6,15 @@ type AppConfig = {
   resumePdf: string;
 };
 
+const getResumeDownloadFilename = (resumePdf: string) => {
+  const sourceFilename = resumePdf.split(/[?#]/, 1)[0].split("/").pop() ?? "";
+  const date = sourceFilename.match(/(?:^|_)(\d{4}-\d{2}-\d{2})(?:_|\.|$)/)?.[1];
+
+  return date
+    ? `Jahangir_Alam_Resume__${date}.pdf`
+    : "Jahangir_Alam_Resume.pdf";
+};
+
 const socialLinks = [
   { icon: Linkedin, href: "https://www.linkedin.com/in/jahangir1x/", label: "LinkedIn" },
   { icon: Github, href: "https://github.com/jarx64", label: "GitHub" },
@@ -229,6 +238,9 @@ const HandleTooltip = () => {
 
 const HeroSection = () => {
   const [resumePdf, setResumePdf] = useState<string | null>(null);
+  const resumeDownloadFilename = resumePdf
+    ? getResumeDownloadFilename(resumePdf)
+    : undefined;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -328,7 +340,7 @@ const HeroSection = () => {
             <div className="flex justify-center pt-2 hero-text-element opacity-0">
               <a 
                 href={resumePdf ?? undefined}
-                download="Jahangir_Alam_Resume.pdf"
+                download={resumeDownloadFilename}
                 aria-disabled={!resumePdf}
                 onClick={(event) => {
                   if (!resumePdf) event.preventDefault();
