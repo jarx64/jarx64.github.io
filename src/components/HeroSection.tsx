@@ -1,4 +1,5 @@
 import anime from "animejs";
+import { gsap } from "gsap";
 import { Facebook, FileText, Github, Linkedin, Mail } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -23,6 +24,151 @@ const socialLinks = [
   { icon: Mail, href: "mailto:jahangir64r@gmail.com", label: "Email" },
   { icon: Facebook, href: "https://www.facebook.com/jarx64", label: "Facebook" },
 ];
+
+const SocialLink = ({ icon: Icon, href, label }: (typeof socialLinks)[number]) => {
+  const linkRef = useRef<HTMLAnchorElement>(null);
+  const iconRef = useRef<SVGSVGElement>(null);
+  const labelClipRef = useRef<HTMLSpanElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
+  const borderRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const link = linkRef.current;
+    const icon = iconRef.current;
+    const labelClip = labelClipRef.current;
+    const labelText = labelRef.current;
+    const border = borderRef.current;
+
+    if (!link || !icon || !labelClip || !labelText || !border) return;
+
+    const media = gsap.matchMedia();
+
+    media.add(
+      {
+        reducedMotion: "(prefers-reduced-motion: reduce)",
+        motionAllowed: "(prefers-reduced-motion: no-preference)",
+      },
+      (context) => {
+        const reduceMotion = context.conditions?.reducedMotion ?? false;
+        const labelWidth = labelText.scrollWidth;
+        let isHovered = false;
+        let isFocused = false;
+
+        gsap.set(border, { autoAlpha: 0, scaleX: 0.88 });
+        gsap.set(labelClip, { autoAlpha: 0, width: 0, x: -5 });
+        gsap.set(icon, { scale: 1, rotation: 0 });
+
+        const timeline = gsap
+          .timeline({ paused: true })
+          .to(
+            border,
+            {
+              autoAlpha: 1,
+              scaleX: 1,
+              duration: reduceMotion ? 0 : 0.28,
+              ease: "power2.out",
+            },
+            0,
+          )
+          .to(
+            labelClip,
+            {
+              autoAlpha: 1,
+              width: labelWidth,
+              x: 0,
+              duration: reduceMotion ? 0 : 0.36,
+              ease: "power3.out",
+            },
+            0.02,
+          )
+          .to(
+            icon,
+            {
+              scale: 1.08,
+              rotation: -4,
+              duration: reduceMotion ? 0 : 0.34,
+              ease: "back.out(2)",
+            },
+            0,
+          )
+          .to(
+            link,
+            {
+              color: "oklch(var(--primary))",
+              duration: reduceMotion ? 0 : 0.24,
+              ease: "power2.out",
+            },
+            0,
+          );
+
+        const updateState = () => {
+          if (isHovered || isFocused) {
+            timeline.play();
+          } else {
+            timeline.reverse();
+          }
+        };
+        const handlePointerEnter = () => {
+          isHovered = true;
+          updateState();
+        };
+        const handlePointerLeave = () => {
+          isHovered = false;
+          updateState();
+        };
+        const handleFocus = () => {
+          isFocused = true;
+          updateState();
+        };
+        const handleBlur = () => {
+          isFocused = false;
+          updateState();
+        };
+
+        link.addEventListener("pointerenter", handlePointerEnter);
+        link.addEventListener("pointerleave", handlePointerLeave);
+        link.addEventListener("focus", handleFocus);
+        link.addEventListener("blur", handleBlur);
+
+        return () => {
+          link.removeEventListener("pointerenter", handlePointerEnter);
+          link.removeEventListener("pointerleave", handlePointerLeave);
+          link.removeEventListener("focus", handleFocus);
+          link.removeEventListener("blur", handleBlur);
+        };
+      },
+    );
+
+    return () => media.revert();
+  }, []);
+
+  return (
+    <a
+      ref={linkRef}
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="relative inline-flex min-h-10 items-center justify-center rounded-full px-2.5 text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      aria-label={label}
+    >
+      <span
+        ref={borderRef}
+        className="pointer-events-none absolute inset-0 origin-center rounded-full border border-primary/50 bg-primary/[0.06] opacity-0 shadow-[0_8px_30px_-16px_oklch(var(--primary))]"
+        aria-hidden="true"
+      />
+      <Icon ref={iconRef} className="relative z-10 h-5 w-5 shrink-0" aria-hidden="true" />
+      <span
+        ref={labelClipRef}
+        className="relative z-10 block w-0 overflow-hidden whitespace-nowrap opacity-0"
+        aria-hidden="true"
+      >
+        <span ref={labelRef} className="inline-block pl-2 font-mono text-sm">
+          {label}
+        </span>
+      </span>
+    </a>
+  );
+};
 
 const nameCollapseFrames = [
   "Jahangir Alam Rocky",
@@ -367,22 +513,10 @@ const HeroSection = () => {
               </span>
             </div>
 
-            {/* Social Links - Minimal text/icon mix */}
-            <div className="flex justify-center gap-10 pt-2 hero-text-element opacity-0">
-              {socialLinks.map(({ icon: Icon, href, label }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex items-center justify-center text-muted-foreground hover:text-primary transition duration-700"
-                  aria-label={label}
-                >
-                  <Icon className="w-5 h-5 transition duration-700 group-hover:scale-110" />
-                  <span className="hidden md:block font-mono text-sm whitespace-nowrap overflow-hidden max-w-0 opacity-0 group-hover:max-w-[100px] group-hover:ml-2 group-hover:opacity-100 transition-all duration-700 ease-out">
-                    {label}
-                  </span>
-                </a>
+            {/* Social Links */}
+            <div className="flex flex-wrap justify-center gap-3 pt-2 sm:gap-5 hero-text-element opacity-0">
+              {socialLinks.map((socialLink) => (
+                <SocialLink key={socialLink.label} {...socialLink} />
               ))}
             </div>
           </div>
