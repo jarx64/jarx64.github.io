@@ -169,7 +169,7 @@ const InteractiveGridBackground = ({
       trail.forEach((cell, index) => {
         const progress = 1 - index / Math.max(trail.length, 1);
         context.globalAlpha = Math.max(0.08, progress * progress * 0.56);
-        context.shadowColor = context.fillStyle;
+        context.shadowColor = context.fillStyle.toString();
         context.shadowBlur = glow ? glowRadius : 0;
         context.fillRect(
           cell.x * cellSize + 1,
