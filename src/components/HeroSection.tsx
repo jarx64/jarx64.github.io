@@ -1,7 +1,13 @@
 import anime from "animejs";
 import { gsap } from "gsap";
 import { Facebook, FileText, Github, Linkedin, Mail } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  type PointerEvent as ReactPointerEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { useMagneticElement } from "@/hooks/use-magnetic-element";
 
@@ -187,7 +193,8 @@ const nameCollapseFrames = [
 ];
 
 const HandleTooltip = () => {
-  const handleRef = useRef<HTMLSpanElement>(null);
+  const rootRef = useRef<HTMLSpanElement>(null);
+  const handleRef = useRef<HTMLButtonElement>(null);
   const handleLabelRef = useRef<HTMLSpanElement>(null);
   const tooltipRef = useRef<HTMLSpanElement>(null);
   const handleTextRef = useRef<HTMLSpanElement>(null);
@@ -195,6 +202,7 @@ const HandleTooltip = () => {
   const atRef = useRef<HTMLSpanElement>(null);
   const jokeRef = useRef<HTMLSpanElement>(null);
   const runRef = useRef(0);
+  const isTooltipOpenRef = useRef(false);
   const timelineRef = useRef<ReturnType<typeof anime.timeline> | null>(null);
 
   useMagneticElement(handleRef, handleLabelRef);
@@ -235,12 +243,15 @@ const HandleTooltip = () => {
     };
   }, [resetTooltip]);
 
-  const showTooltip = () => {
+  const showTooltip = useCallback(() => {
+    if (isTooltipOpenRef.current) return;
+
     const run = ++runRef.current;
     const tooltip = tooltipRef.current;
     const handleText = handleTextRef.current;
 
     if (!tooltip || !handleText) return;
+    isTooltipOpenRef.current = true;
 
     timelineRef.current?.pause();
     anime.remove([tooltip, suffixRef.current, atRef.current, jokeRef.current]);
@@ -313,9 +324,12 @@ const HandleTooltip = () => {
         duration: 380,
         easing: "easeOutBack",
       });
-  };
+  }, [resetTooltip]);
 
-  const hideTooltip = () => {
+  const hideTooltip = useCallback(() => {
+    if (!isTooltipOpenRef.current) return;
+    isTooltipOpenRef.current = false;
+
     const run = ++runRef.current;
     const targets = [tooltipRef.current, suffixRef.current, atRef.current, jokeRef.current];
 
@@ -333,24 +347,66 @@ const HandleTooltip = () => {
         if (run === runRef.current) resetTooltip();
       },
     });
+  }, [resetTooltip]);
+
+  useEffect(() => {
+    const handleOutsidePointerDown = (event: PointerEvent) => {
+      if (
+        !isTooltipOpenRef.current ||
+        rootRef.current?.contains(event.target as Node)
+      ) {
+        return;
+      }
+
+      hideTooltip();
+    };
+
+    document.addEventListener("pointerdown", handleOutsidePointerDown);
+
+    return () => document.removeEventListener("pointerdown", handleOutsidePointerDown);
+  }, [hideTooltip]);
+
+  const handlePointerEnter = (event: ReactPointerEvent<HTMLSpanElement>) => {
+    if (event.pointerType !== "touch") showTooltip();
+  };
+
+  const handlePointerLeave = (event: ReactPointerEvent<HTMLSpanElement>) => {
+    if (event.pointerType !== "touch") hideTooltip();
+  };
+
+  const handlePointerDown = (event: ReactPointerEvent<HTMLSpanElement>) => {
+    if (event.pointerType !== "touch") return;
+
+    if (isTooltipOpenRef.current) {
+      hideTooltip();
+    } else {
+      showTooltip();
+    }
+  };
+
+  const handlePointerCancel = (event: ReactPointerEvent<HTMLSpanElement>) => {
+    if (event.pointerType === "touch") hideTooltip();
   };
 
   return (
     <span
+      ref={rootRef}
       className="relative inline-flex"
-      onPointerEnter={showTooltip}
-      onPointerLeave={hideTooltip}
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
+      onPointerDown={handlePointerDown}
+      onPointerCancel={handlePointerCancel}
       onFocus={showTooltip}
       onBlur={hideTooltip}
     >
-      <span
+      <button
         ref={handleRef}
+        type="button"
         className="inline-flex cursor-help rounded-full border border-primary/30 bg-background px-5 py-2 font-mono text-xl font-semibold tracking-tight text-primary shadow-[0_0_32px_-12px_oklch(var(--primary))] outline-none transition-colors hover:border-primary/60 hover:bg-background focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-2xl"
-        tabIndex={0}
         aria-describedby="handle-tooltip"
       >
         <span ref={handleLabelRef}>@jarx64</span>
-      </span>
+      </button>
 
       <span className="pointer-events-none absolute bottom-[calc(100%+14px)] left-1/2 z-30 -translate-x-1/2">
         <span
