@@ -177,7 +177,23 @@ const SocialLink = ({ icon: Icon, href, label }: (typeof socialLinks)[number]) =
   );
 };
 
-const nameCollapseFrames = [
+const tooltipNameCollapseFrames = [
+  "Jahangir Alam Rocky",
+  "Jahangi Alam Rocky",
+  "Jahang Alam Rocky",
+  "Jahan Alam Rocky",
+  "Jaha Alam Rock",
+  "Jah Ala Roc",
+  "Ja Al Ro",
+  "J A R",
+  "j A R",
+  "j a R",
+  "j a r",
+  "ja r",
+  "jar",
+];
+
+const heroIntroNameCollapseFrames = [
   "Jahangir Alam Rocky",
   "Jahangi Alam Rocky",
   "Jahang Alam Rocky",
@@ -213,7 +229,7 @@ const HandleTooltip = ({ buttonRef, buttonLabelRef }: HandleTooltipProps) => {
 
   const resetTooltip = useCallback(() => {
     if (handleTextRef.current) {
-      handleTextRef.current.textContent = nameCollapseFrames[0];
+      handleTextRef.current.textContent = tooltipNameCollapseFrames[0];
     }
 
     anime.set(tooltipRef.current, {
@@ -291,13 +307,18 @@ const HandleTooltip = ({ buttonRef, buttonLabelRef }: HandleTooltipProps) => {
       .add(
         {
           targets: frameState,
-          frame: nameCollapseFrames.length - 1,
+          frame: tooltipNameCollapseFrames.length - 1,
           duration: 900,
           easing: "linear",
           update: () => {
             if (run !== runRef.current) return;
             handleText.textContent =
-              nameCollapseFrames[Math.min(Math.round(frameState.frame), nameCollapseFrames.length - 1)];
+              tooltipNameCollapseFrames[
+                Math.min(
+                  Math.round(frameState.frame),
+                  tooltipNameCollapseFrames.length - 1,
+                )
+              ];
           },
           complete: () => {
             if (run === runRef.current) handleText.textContent = "jar";
@@ -539,7 +560,7 @@ const HeroSection = () => {
           hasPlayedHeroIntro || (context.conditions?.reduceMotion ?? false);
 
         const showCompletedHero = () => {
-          name.textContent = nameCollapseFrames[0];
+          name.textContent = heroIntroNameCollapseFrames[0];
           gsap.set([at, suffix], { autoAlpha: 0, display: "none" });
           gsap.set(heading, {
             autoAlpha: 1,
@@ -597,7 +618,7 @@ const HeroSection = () => {
           )
           .addLabel("collapse", 1.35);
 
-        nameCollapseFrames.slice(1).forEach((frame, index) => {
+        heroIntroNameCollapseFrames.slice(1).forEach((frame, index) => {
           timeline
             .to(
               heading,
@@ -659,7 +680,7 @@ const HeroSection = () => {
             ease: "back.out(1.7)",
           })
           .call(() => {
-            name.textContent = nameCollapseFrames[0];
+            name.textContent = heroIntroNameCollapseFrames[0];
           })
           .set([at, suffix], { autoAlpha: 0, display: "none" })
           .set(heading, { x: 0, y: 0, scale: 1 })
