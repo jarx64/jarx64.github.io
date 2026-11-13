@@ -616,7 +616,7 @@ const HeroSection = () => {
             },
             0.3,
           )
-          .addLabel("collapse", 1.35);
+          .addLabel("collapse", 1.75);
 
         heroIntroNameCollapseFrames.slice(1).forEach((frame, index) => {
           timeline
