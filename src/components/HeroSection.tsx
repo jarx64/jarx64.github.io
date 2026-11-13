@@ -21,8 +21,8 @@ const getResumeDownloadFilename = (resumePdf: string) => {
   const date = sourceFilename.match(/(?:^|_)(\d{4}-\d{2}-\d{2})(?:_|\.|$)/)?.[1];
 
   return date
-    ? `Jahangir_Alam_Resume__${date}.pdf`
-    : "Jahangir_Alam_Resume.pdf";
+    ? `Jahangir_Alam__Resume__${date}.pdf`
+    : "Jahangir_Alam__Resume.pdf";
 };
 
 const socialLinks = [
