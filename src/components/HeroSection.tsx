@@ -3,6 +3,7 @@ import { gsap } from "gsap";
 import { Facebook, FileText, Github, Linkedin, Mail } from "lucide-react";
 import {
   type PointerEvent as ReactPointerEvent,
+  type RefObject,
   useCallback,
   useEffect,
   useRef,
@@ -176,7 +177,7 @@ const SocialLink = ({ icon: Icon, href, label }: (typeof socialLinks)[number]) =
   );
 };
 
-const nameCollapseFrames = [
+const tooltipNameCollapseFrames = [
   "Jahangir Alam Rocky",
   "Jahangi Alam Rocky",
   "Jahang Alam Rocky",
@@ -192,10 +193,13 @@ const nameCollapseFrames = [
   "jar",
 ];
 
-const HandleTooltip = () => {
+type HandleTooltipProps = {
+  buttonRef: RefObject<HTMLButtonElement>;
+  buttonLabelRef: RefObject<HTMLSpanElement>;
+};
+
+const HandleTooltip = ({ buttonRef, buttonLabelRef }: HandleTooltipProps) => {
   const rootRef = useRef<HTMLSpanElement>(null);
-  const handleRef = useRef<HTMLButtonElement>(null);
-  const handleLabelRef = useRef<HTMLSpanElement>(null);
   const tooltipRef = useRef<HTMLSpanElement>(null);
   const handleTextRef = useRef<HTMLSpanElement>(null);
   const suffixRef = useRef<HTMLSpanElement>(null);
@@ -205,11 +209,11 @@ const HandleTooltip = () => {
   const isTooltipOpenRef = useRef(false);
   const timelineRef = useRef<ReturnType<typeof anime.timeline> | null>(null);
 
-  useMagneticElement(handleRef, handleLabelRef);
+  useMagneticElement(buttonRef, buttonLabelRef);
 
   const resetTooltip = useCallback(() => {
     if (handleTextRef.current) {
-      handleTextRef.current.textContent = nameCollapseFrames[0];
+      handleTextRef.current.textContent = tooltipNameCollapseFrames[0];
     }
 
     anime.set(tooltipRef.current, {
@@ -287,13 +291,18 @@ const HandleTooltip = () => {
       .add(
         {
           targets: frameState,
-          frame: nameCollapseFrames.length - 1,
+          frame: tooltipNameCollapseFrames.length - 1,
           duration: 900,
           easing: "linear",
           update: () => {
             if (run !== runRef.current) return;
             handleText.textContent =
-              nameCollapseFrames[Math.min(Math.round(frameState.frame), nameCollapseFrames.length - 1)];
+              tooltipNameCollapseFrames[
+                Math.min(
+                  Math.round(frameState.frame),
+                  tooltipNameCollapseFrames.length - 1,
+                )
+              ];
           },
           complete: () => {
             if (run === runRef.current) handleText.textContent = "jar";
@@ -400,12 +409,12 @@ const HandleTooltip = () => {
       onBlur={hideTooltip}
     >
       <button
-        ref={handleRef}
+        ref={buttonRef}
         type="button"
-        className="inline-flex cursor-help rounded-full border border-primary/30 bg-background px-5 py-2 font-mono text-xl font-semibold tracking-tight text-primary shadow-[0_0_32px_-12px_oklch(var(--primary))] outline-none transition-colors hover:border-primary/60 hover:bg-background focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-2xl"
+        className="invisible inline-flex cursor-help rounded-full border border-primary/30 bg-background px-5 py-2 font-mono text-xl font-semibold tracking-tight text-primary opacity-0 shadow-[0_0_32px_-12px_oklch(var(--primary))] outline-none transition-colors hover:border-primary/60 hover:bg-background focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-2xl"
         aria-describedby="handle-tooltip"
       >
-        <span ref={handleLabelRef}>@jarx64</span>
+        <span ref={buttonLabelRef}>@jarx64</span>
       </button>
 
       <span className="pointer-events-none absolute bottom-[calc(100%+14px)] left-1/2 z-30 -translate-x-1/2">
@@ -445,8 +454,18 @@ const HandleTooltip = () => {
   );
 };
 
+let hasPlayedHeroIntro = false;
+
 const HeroSection = () => {
   const [resumePdf, setResumePdf] = useState<string | null>(null);
+  const heroRef = useRef<HTMLElement>(null);
+  const introHeadingRef = useRef<HTMLHeadingElement>(null);
+  const introAtRef = useRef<HTMLSpanElement>(null);
+  const introNameRef = useRef<HTMLSpanElement>(null);
+  const introSuffixRef = useRef<HTMLSpanElement>(null);
+  const handleRowRef = useRef<HTMLDivElement>(null);
+  const handleButtonRef = useRef<HTMLButtonElement>(null);
+  const handleButtonLabelRef = useRef<HTMLSpanElement>(null);
   const resumeButtonRef = useRef<HTMLSpanElement>(null);
   const resumeButtonContentRef = useRef<HTMLSpanElement>(null);
   const resumeDownloadFilename = resumePdf
@@ -488,50 +507,332 @@ const HeroSection = () => {
   }, []);
 
   useEffect(() => {
-    const heroElements = '.hero-text-element';
+    const hero = heroRef.current;
+    const heading = introHeadingRef.current;
+    const at = introAtRef.current;
+    const name = introNameRef.current;
+    const suffix = introSuffixRef.current;
+    const handleRow = handleRowRef.current;
+    const handleButton = handleButtonRef.current;
+    const handleButtonLabel = handleButtonLabelRef.current;
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      anime.set(heroElements, { opacity: 1, translateY: 0 });
+    if (
+      !hero ||
+      !heading ||
+      !at ||
+      !name ||
+      !suffix ||
+      !handleRow ||
+      !handleButton ||
+      !handleButtonLabel
+    ) {
       return;
     }
 
-    // Text Reveal Animation
-    anime({
-      targets: heroElements,
-      translateY: [20, 0],
-      opacity: [0, 1],
-      duration: 800,
-      easing: 'easeOutExpo',
-      delay: anime.stagger(100, { start: 200 })
-    });
+    const supportingElements = hero.querySelectorAll<HTMLElement>(
+      ".hero-support-element",
+    );
+    const introInitials = Array.from(
+      name.querySelectorAll<HTMLElement>("[data-intro-initial]"),
+    );
+    const introNameFragments = Array.from(
+      name.querySelectorAll<HTMLElement>("[data-intro-fragment]"),
+    );
+    const introCollapsibleParts = Array.from(
+      name.querySelectorAll<HTMLElement>("[data-intro-collapsible]"),
+    );
+    const uppercaseInitials = ["J", "A", "R"];
+    const lowercaseInitials = ["j", "a", "r"];
+    const media = gsap.matchMedia();
+
+    media.add(
+      {
+        reduceMotion: "(prefers-reduced-motion: reduce)",
+        motionAllowed: "(prefers-reduced-motion: no-preference)",
+      },
+      (context) => {
+        const shouldSkip =
+          hasPlayedHeroIntro || (context.conditions?.reduceMotion ?? false);
+
+        const resetIntroName = () => {
+          introInitials.forEach((letter, index) => {
+            letter.textContent = uppercaseInitials[index];
+          });
+          gsap.set(introCollapsibleParts, { display: "inline-block" });
+          gsap.set(introNameFragments, { autoAlpha: 1 });
+          gsap.set(introInitials, { x: 0, y: 0, scale: 1 });
+        };
+
+        const showCompletedHero = () => {
+          resetIntroName();
+          gsap.set([at, suffix], { autoAlpha: 0, display: "none" });
+          gsap.set(heading, {
+            autoAlpha: 1,
+            x: 0,
+            y: 0,
+            scale: 1,
+            clearProps: "transform",
+          });
+          gsap.set([handleRow, handleButton, ...supportingElements], {
+            autoAlpha: 1,
+            x: 0,
+            y: 0,
+            scale: 1,
+          });
+        };
+
+        if (shouldSkip) {
+          showCompletedHero();
+          return;
+        }
+
+        hasPlayedHeroIntro = true;
+        resetIntroName();
+
+        gsap.set(heading, {
+          autoAlpha: 0,
+          y: 20,
+          scale: 1,
+          transformOrigin: "center center",
+          willChange: "transform, opacity",
+        });
+        gsap.set([at, suffix], { autoAlpha: 0, display: "none", y: 8, scale: 0.65 });
+        gsap.set(introInitials, { willChange: "transform" });
+        gsap.set(introNameFragments, { willChange: "opacity" });
+        gsap.set(handleRow, { autoAlpha: 1 });
+        gsap.set(handleButton, { autoAlpha: 0, scale: 0.92 });
+        gsap.set(supportingElements, { autoAlpha: 0, y: 16 });
+
+        let collapsedInitialX: number[] = [];
+        const timeline = gsap.timeline({
+          defaults: { ease: "power2.out" },
+          onComplete: () => {
+            gsap.set(heading, { clearProps: "willChange" });
+            gsap.set([...introInitials, ...introNameFragments], {
+              clearProps: "willChange",
+            });
+          },
+        });
+
+        timeline
+          .to(heading, { autoAlpha: 1, y: 0, duration: 0.7 }, 0.15)
+          .to(
+            supportingElements,
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.65,
+              stagger: 0.09,
+              ease: "power3.out",
+            },
+            0.3,
+          )
+          .addLabel("collapse", 1.75);
+
+        timeline
+          .to(
+            introNameFragments,
+            {
+              autoAlpha: 0,
+              duration: 0.42,
+              stagger: 0.04,
+              ease: "power2.out",
+            },
+            "collapse",
+          )
+          .call(
+            () => {
+              const nameRect = name.getBoundingClientRect();
+              const letterRects = introInitials.map((initial) =>
+                initial.getBoundingClientRect(),
+              );
+              const jarWidth = letterRects.reduce(
+                (total, rect) => total + rect.width,
+                0,
+              );
+              const jarLeft = nameRect.left + (nameRect.width - jarWidth) / 2;
+              let precedingWidth = 0;
+
+              collapsedInitialX = letterRects.map((rect) => {
+                const offset = jarLeft + precedingWidth - rect.left;
+                precedingWidth += rect.width;
+                return offset;
+              });
+            },
+            [],
+            ">+=0.1",
+          )
+          .to(
+            introInitials,
+            {
+              x: (index) => collapsedInitialX[index] ?? 0,
+              duration: 0.62,
+              ease: "power3.inOut",
+            },
+            ">",
+          )
+          .set(introCollapsibleParts, { display: "none" })
+          .set(introInitials, { x: 0 })
+          .addLabel("lowercase", ">+=0.12");
+
+        introInitials.forEach((letter, index) => {
+          const lowercaseAt = `lowercase+=${index * 0.1}`;
+
+          timeline
+            .to(
+              letter,
+              {
+                y: 2,
+                scale: 0.78,
+                duration: 0.1,
+                ease: "power2.in",
+              },
+              lowercaseAt,
+            )
+            .call(
+              () => {
+                letter.textContent = lowercaseInitials[index];
+              },
+              [],
+              `${lowercaseAt}+=0.1`,
+            )
+            .to(
+              letter,
+              {
+                y: 0,
+                scale: 1,
+                duration: 0.18,
+                ease: "back.out(2)",
+              },
+              `${lowercaseAt}+=0.1`,
+            );
+        });
+
+        timeline
+          .set(suffix, { display: "inline-block" })
+          .to(suffix, {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.38,
+            ease: "back.out(2)",
+          })
+          .set(at, { display: "inline-block" })
+          .to(at, {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.38,
+            ease: "back.out(2)",
+          })
+          .addLabel("moveToHandle", ">+=0.2")
+          .to(
+            heading,
+            {
+              x: () => {
+                const source = heading.getBoundingClientRect();
+                const target = handleButtonLabel.getBoundingClientRect();
+                return target.left + target.width / 2 - (source.left + source.width / 2);
+              },
+              y: () => {
+                const source = heading.getBoundingClientRect();
+                const target = handleButtonLabel.getBoundingClientRect();
+                return target.top + target.height / 2 - (source.top + source.height / 2);
+              },
+              scale: () => {
+                const source = heading.getBoundingClientRect();
+                const target = handleButtonLabel.getBoundingClientRect();
+                return Math.min(target.width / source.width, target.height / source.height);
+              },
+              duration: 0.95,
+              ease: "power3.inOut",
+            },
+            "moveToHandle",
+          )
+          .to(heading, { autoAlpha: 0, duration: 0.16 })
+          .to(handleButton, {
+            autoAlpha: 1,
+            scale: 1,
+            duration: 0.42,
+            ease: "back.out(1.7)",
+          })
+          .call(() => {
+            resetIntroName();
+          })
+          .set([at, suffix], { autoAlpha: 0, display: "none" })
+          .set(heading, { x: 0, y: 0, scale: 1 })
+          .to(heading, { autoAlpha: 1, duration: 0.7, ease: "power2.out" });
+
+        return () => timeline.kill();
+      },
+      hero,
+    );
+
+    return () => media.revert();
   }, []);
 
   return (
-    <section id="about" className="flex min-h-[90vh] items-center overflow-hidden pb-12 pt-24">
+    <section ref={heroRef} id="about" className="flex min-h-[90vh] items-center overflow-hidden pb-12 pt-24">
       <div className="container mx-auto px-6 md:px-12">
         <div className="flex flex-col items-center justify-center text-center max-w-5xl mx-auto space-y-12">
           
           <div className="space-y-10 w-full">
             {/* Intro */}
             <div className="flex flex-col items-center">
-              <h1 className="text-5xl sm:text-6xl md:text-8xl font-bold leading-[0.92] tracking-tighter text-balance text-foreground hero-text-element opacity-0">
-                Jahangir Alam Rocky
+              <h1
+                ref={introHeadingRef}
+                aria-label="Jahangir Alam Rocky"
+                className="invisible whitespace-nowrap text-[clamp(1.75rem,8.5vw,3rem)] font-bold leading-[0.92] tracking-tighter text-foreground opacity-0 sm:text-6xl md:text-8xl"
+              >
+                <span ref={introAtRef} aria-hidden="true" className="invisible hidden text-primary">
+                  @
+                </span>
+                <span ref={introNameRef} aria-hidden="true" className="inline-block">
+                  <span data-intro-initial className="inline-block">J</span>
+                  <span data-intro-fragment data-intro-collapsible className="inline-block">
+                    ahangir
+                  </span>
+                  <span data-intro-collapsible className="inline-block">
+                    &nbsp;
+                  </span>
+                  <span data-intro-initial className="inline-block">A</span>
+                  <span data-intro-fragment data-intro-collapsible className="inline-block">
+                    lam
+                  </span>
+                  <span data-intro-collapsible className="inline-block">
+                    &nbsp;
+                  </span>
+                  <span data-intro-initial className="inline-block">R</span>
+                  <span data-intro-fragment data-intro-collapsible className="inline-block">
+                    ocky
+                  </span>
+                </span>
+                <span ref={introSuffixRef} aria-hidden="true" className="invisible hidden text-accent">
+                  x64
+                </span>
               </h1>
 
-              <div className="mt-6 flex w-full max-w-xl items-center gap-4 sm:gap-6 hero-text-element opacity-0" aria-label="Online handle: jarx64">
+              <div
+                ref={handleRowRef}
+                className="invisible mt-6 flex w-full max-w-xl items-center gap-4 opacity-0 sm:gap-6"
+                aria-label="Online handle: jarx64"
+              >
                 <span className="h-px flex-1 bg-gradient-to-r from-transparent to-primary/50" aria-hidden="true" />
-                <HandleTooltip />
+                <HandleTooltip
+                  buttonRef={handleButtonRef}
+                  buttonLabelRef={handleButtonLabelRef}
+                />
                 <span className="h-px flex-1 bg-gradient-to-l from-transparent to-primary/50" aria-hidden="true" />
               </div>
 
-              <p className="mt-5 font-mono text-xs sm:text-sm font-medium uppercase tracking-[0.24em] text-muted-foreground hero-text-element opacity-0">
+              <p className="hero-support-element invisible mt-5 font-mono text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground opacity-0 sm:text-sm">
                 Software Engineer
               </p>
             </div>
 
             {/* Description */}
             <div className="max-w-2xl mx-auto space-y-5">
-              <p className="text-xl sm:text-2xl md:text-3xl font-light text-muted-foreground leading-snug text-balance hero-text-element opacity-0">
+              <p className="hero-support-element invisible text-balance text-xl font-light leading-snug text-muted-foreground opacity-0 sm:text-2xl md:text-3xl">
                 Crafting scalable systems in <span className="text-foreground font-medium">.NET</span> and <span className="text-foreground font-medium">Go</span>.
               </p>
               
@@ -550,7 +851,7 @@ const HeroSection = () => {
             </div> */}
 
             {/* Resume Button */}
-            <div className="flex justify-center pt-2 hero-text-element opacity-0">
+            <div className="hero-support-element invisible flex justify-center pt-2 opacity-0">
               <span ref={resumeButtonRef} className="inline-flex">
                 <a
                   href={resumePdf ?? undefined}
@@ -570,7 +871,7 @@ const HeroSection = () => {
             </div>
 
             {/* Social Links */}
-            <div className="flex flex-wrap justify-center gap-3 pt-2 sm:gap-5 hero-text-element opacity-0">
+            <div className="hero-support-element invisible flex flex-wrap justify-center gap-3 pt-2 opacity-0 sm:gap-5">
               {socialLinks.map((socialLink) => (
                 <SocialLink key={socialLink.label} {...socialLink} />
               ))}
