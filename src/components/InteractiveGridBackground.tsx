@@ -204,9 +204,7 @@ const InteractiveGridBackground = ({
       }
     };
 
-    const handlePointerMove = (event: PointerEvent) => {
-      if (event.pointerType !== "mouse") return;
-
+    const handlePointerInteraction = (event: PointerEvent) => {
       cachedRect ??= container.getBoundingClientRect();
       const x = event.clientX - cachedRect.left;
       const y = event.clientY - cachedRect.top;
@@ -285,14 +283,16 @@ const InteractiveGridBackground = ({
 
     resizeCanvas();
     startDrawing();
-    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointerdown", handlePointerInteraction, { passive: true });
+    window.addEventListener("pointermove", handlePointerInteraction, { passive: true });
     window.addEventListener("scroll", handleScroll, { passive: true });
     document.addEventListener("visibilitychange", handleVisibilityChange);
     motionQuery.addEventListener("change", handleMotionPreference);
 
     return () => {
       window.cancelAnimationFrame(animationFrameId);
-      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerdown", handlePointerInteraction);
+      window.removeEventListener("pointermove", handlePointerInteraction);
       window.removeEventListener("scroll", handleScroll);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       motionQuery.removeEventListener("change", handleMotionPreference);
