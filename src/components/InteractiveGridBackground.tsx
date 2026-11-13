@@ -30,7 +30,7 @@ const InteractiveGridBackground = ({
   mobileGridSize = 36,
   effectColor = "#4f46e5",
   darkEffectColor = "#8b5cf6",
-  trailLength = 6,
+  trailLength = 8,
   glow = true,
   glowRadius = 18,
   showFade = true,
@@ -163,7 +163,7 @@ const InteractiveGridBackground = ({
     >
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 block h-full w-full [background-image:linear-gradient(to_right,oklch(var(--border)/0.55)_1px,transparent_1px),linear-gradient(to_bottom,oklch(var(--border)/0.55)_1px,transparent_1px)]"
+        className="absolute inset-0 block h-full w-full [background-image:linear-gradient(to_right,oklch(var(--border)/0.00)_1px,transparent_1px),linear-gradient(to_bottom,oklch(var(--border)/0.00)_1px,transparent_1px)]"
       />
 
       {showFade && (
