@@ -193,22 +193,6 @@ const tooltipNameCollapseFrames = [
   "jar",
 ];
 
-const heroIntroNameCollapseFrames = [
-  "Jahangir Alam Rocky",
-  "Jahangi Alam Rocky",
-  "Jahang Alam Rocky",
-  "Jahan Alam Rocky",
-  "Jaha Alam Rock",
-  "Jah Ala Roc",
-  "Ja Al Ro",
-  "J A R",
-  "j A R",
-  "j a R",
-  "j a r",
-  "ja r",
-  "jar",
-];
-
 type HandleTooltipProps = {
   buttonRef: RefObject<HTMLButtonElement>;
   buttonLabelRef: RefObject<HTMLSpanElement>;
@@ -548,6 +532,17 @@ const HeroSection = () => {
     const supportingElements = hero.querySelectorAll<HTMLElement>(
       ".hero-support-element",
     );
+    const introInitials = Array.from(
+      name.querySelectorAll<HTMLElement>("[data-intro-initial]"),
+    );
+    const introNameFragments = Array.from(
+      name.querySelectorAll<HTMLElement>("[data-intro-fragment]"),
+    );
+    const introCollapsibleParts = Array.from(
+      name.querySelectorAll<HTMLElement>("[data-intro-collapsible]"),
+    );
+    const uppercaseInitials = ["J", "A", "R"];
+    const lowercaseInitials = ["j", "a", "r"];
     const media = gsap.matchMedia();
 
     media.add(
@@ -559,8 +554,17 @@ const HeroSection = () => {
         const shouldSkip =
           hasPlayedHeroIntro || (context.conditions?.reduceMotion ?? false);
 
+        const resetIntroName = () => {
+          introInitials.forEach((letter, index) => {
+            letter.textContent = uppercaseInitials[index];
+          });
+          gsap.set(introCollapsibleParts, { display: "inline-block" });
+          gsap.set(introNameFragments, { autoAlpha: 1 });
+          gsap.set(introInitials, { x: 0, y: 0, scale: 1 });
+        };
+
         const showCompletedHero = () => {
-          name.textContent = heroIntroNameCollapseFrames[0];
+          resetIntroName();
           gsap.set([at, suffix], { autoAlpha: 0, display: "none" });
           gsap.set(heading, {
             autoAlpha: 1,
@@ -583,6 +587,7 @@ const HeroSection = () => {
         }
 
         hasPlayedHeroIntro = true;
+        resetIntroName();
 
         gsap.set(heading, {
           autoAlpha: 0,
@@ -592,14 +597,20 @@ const HeroSection = () => {
           willChange: "transform, opacity",
         });
         gsap.set([at, suffix], { autoAlpha: 0, display: "none", y: 8, scale: 0.65 });
+        gsap.set(introInitials, { willChange: "transform" });
+        gsap.set(introNameFragments, { willChange: "opacity" });
         gsap.set(handleRow, { autoAlpha: 1 });
         gsap.set(handleButton, { autoAlpha: 0, scale: 0.92 });
         gsap.set(supportingElements, { autoAlpha: 0, y: 16 });
 
+        let collapsedInitialX: number[] = [];
         const timeline = gsap.timeline({
           defaults: { ease: "power2.out" },
           onComplete: () => {
             gsap.set(heading, { clearProps: "willChange" });
+            gsap.set([...introInitials, ...introNameFragments], {
+              clearProps: "willChange",
+            });
           },
         });
 
@@ -618,17 +629,83 @@ const HeroSection = () => {
           )
           .addLabel("collapse", 1.75);
 
-        heroIntroNameCollapseFrames.slice(1).forEach((frame, index) => {
+        timeline
+          .to(
+            introNameFragments,
+            {
+              autoAlpha: 0,
+              duration: 0.42,
+              stagger: 0.04,
+              ease: "power2.out",
+            },
+            "collapse",
+          )
+          .call(
+            () => {
+              const nameRect = name.getBoundingClientRect();
+              const letterRects = introInitials.map((initial) =>
+                initial.getBoundingClientRect(),
+              );
+              const jarWidth = letterRects.reduce(
+                (total, rect) => total + rect.width,
+                0,
+              );
+              const jarLeft = nameRect.left + (nameRect.width - jarWidth) / 2;
+              let precedingWidth = 0;
+
+              collapsedInitialX = letterRects.map((rect) => {
+                const offset = jarLeft + precedingWidth - rect.left;
+                precedingWidth += rect.width;
+                return offset;
+              });
+            },
+            [],
+            ">+=0.1",
+          )
+          .to(
+            introInitials,
+            {
+              x: (index) => collapsedInitialX[index] ?? 0,
+              duration: 0.62,
+              ease: "power3.inOut",
+            },
+            ">",
+          )
+          .set(introCollapsibleParts, { display: "none" })
+          .set(introInitials, { x: 0 })
+          .addLabel("lowercase", ">+=0.12");
+
+        introInitials.forEach((letter, index) => {
+          const lowercaseAt = `lowercase+=${index * 0.1}`;
+
           timeline
             .to(
-              heading,
-              { scale: 0.985, duration: 0.045, ease: "power1.in" },
-              index === 0 ? "collapse" : ">",
+              letter,
+              {
+                y: 2,
+                scale: 0.78,
+                duration: 0.1,
+                ease: "power2.in",
+              },
+              lowercaseAt,
             )
-            .call(() => {
-              name.textContent = frame;
-            })
-            .to(heading, { scale: 1, duration: 0.105, ease: "power1.out" });
+            .call(
+              () => {
+                letter.textContent = lowercaseInitials[index];
+              },
+              [],
+              `${lowercaseAt}+=0.1`,
+            )
+            .to(
+              letter,
+              {
+                y: 0,
+                scale: 1,
+                duration: 0.18,
+                ease: "back.out(2)",
+              },
+              `${lowercaseAt}+=0.1`,
+            );
         });
 
         timeline
@@ -680,7 +757,7 @@ const HeroSection = () => {
             ease: "back.out(1.7)",
           })
           .call(() => {
-            name.textContent = heroIntroNameCollapseFrames[0];
+            resetIntroName();
           })
           .set([at, suffix], { autoAlpha: 0, display: "none" })
           .set(heading, { x: 0, y: 0, scale: 1 })
@@ -710,7 +787,26 @@ const HeroSection = () => {
                 <span ref={introAtRef} aria-hidden="true" className="invisible hidden text-primary">
                   @
                 </span>
-                <span ref={introNameRef} aria-hidden="true">Jahangir Alam Rocky</span>
+                <span ref={introNameRef} aria-hidden="true" className="inline-block">
+                  <span data-intro-initial className="inline-block">J</span>
+                  <span data-intro-fragment data-intro-collapsible className="inline-block">
+                    ahangir
+                  </span>
+                  <span data-intro-collapsible className="inline-block">
+                    &nbsp;
+                  </span>
+                  <span data-intro-initial className="inline-block">A</span>
+                  <span data-intro-fragment data-intro-collapsible className="inline-block">
+                    lam
+                  </span>
+                  <span data-intro-collapsible className="inline-block">
+                    &nbsp;
+                  </span>
+                  <span data-intro-initial className="inline-block">R</span>
+                  <span data-intro-fragment data-intro-collapsible className="inline-block">
+                    ocky
+                  </span>
+                </span>
                 <span ref={introSuffixRef} aria-hidden="true" className="invisible hidden text-accent">
                   x64
                 </span>
