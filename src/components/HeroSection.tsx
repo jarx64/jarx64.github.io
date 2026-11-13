@@ -148,7 +148,7 @@ const SocialLink = ({ icon: Icon, href, label }: (typeof socialLinks)[number]) =
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="relative inline-flex min-h-10 items-center justify-center rounded-full px-2.5 text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="relative inline-flex min-h-10 items-center justify-center rounded-full bg-background px-2.5 text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       aria-label={label}
     >
       <span
@@ -345,7 +345,7 @@ const HandleTooltip = () => {
     >
       <span
         ref={handleRef}
-        className="inline-flex cursor-help rounded-full border border-primary/30 bg-primary/10 px-5 py-2 font-mono text-xl font-semibold tracking-tight text-primary shadow-[0_0_32px_-12px_oklch(var(--primary))] outline-none transition-colors hover:border-primary/60 hover:bg-primary/15 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-2xl"
+        className="inline-flex cursor-help rounded-full border border-primary/30 bg-background px-5 py-2 font-mono text-xl font-semibold tracking-tight text-primary shadow-[0_0_32px_-12px_oklch(var(--primary))] outline-none transition-colors hover:border-primary/60 hover:bg-background focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-2xl"
         tabIndex={0}
         aria-describedby="handle-tooltip"
       >
