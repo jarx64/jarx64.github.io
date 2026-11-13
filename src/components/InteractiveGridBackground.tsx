@@ -142,9 +142,9 @@ const InteractiveGridBackground = ({
     };
 
     const resizeCanvas = () => {
-      cachedRect = container.getBoundingClientRect();
-      canvasWidth = Math.max(1, Math.round(cachedRect.width));
-      canvasHeight = Math.max(1, Math.round(cachedRect.height));
+      const containerRect = container.getBoundingClientRect();
+      canvasWidth = Math.max(1, Math.round(containerRect.width));
+      canvasHeight = Math.max(1, Math.round(containerRect.height));
       cellSize = canvasWidth < MOBILE_BREAKPOINT ? mobileGridSize : gridSize;
       columns = Math.max(1, Math.ceil(canvasWidth / cellSize));
       rows = Math.max(1, Math.ceil(canvasHeight / cellSize));
@@ -157,6 +157,7 @@ const InteractiveGridBackground = ({
       canvas.style.backgroundSize = `${cellSize}px ${cellSize}px`;
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 
+      cachedRect = null;
       trail.length = 0;
       lastCells.clear();
       activeTouches.clear();
@@ -170,11 +171,11 @@ const InteractiveGridBackground = ({
       clientY: number,
       identifier: number,
     ) => {
-      cachedRect ??= container.getBoundingClientRect();
+      cachedRect ??= canvas.getBoundingClientRect();
       const x = clientX - cachedRect.left;
       const y = clientY - cachedRect.top;
 
-      if (x < 0 || y < 0 || x > cachedRect.width || y > cachedRect.height) {
+      if (x < 0 || y < 0 || x >= cachedRect.width || y >= cachedRect.height) {
         lastCells.delete(identifier);
         return null;
       }
@@ -206,8 +207,11 @@ const InteractiveGridBackground = ({
           pulseCell.y < rows
         ) {
           addToTrail(pulseCell);
-          shouldDraw = true;
         }
+
+        // Keep the cell directly under the finger as the strongest trail cell.
+        addToTrail(touch.cell);
+        shouldDraw = true;
 
         touch.pulseIndex += 1;
         touch.lastPulseTime = time;
