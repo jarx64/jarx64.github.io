@@ -4,6 +4,7 @@ import { Facebook, FileText, Github, Linkedin, Mail } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useMagneticElement } from "@/hooks/use-magnetic-element";
+import InteractiveGridBackground from "@/components/InteractiveGridBackground";
 
 type AppConfig = {
   resumePdf: string;
@@ -451,8 +452,9 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section id="about" className="min-h-[90vh] flex items-center pt-24 pb-12 overflow-hidden">
-      <div className="container mx-auto px-6 md:px-12">
+    <section id="about" className="relative isolate flex min-h-[90vh] items-center overflow-hidden pb-12 pt-24">
+      <InteractiveGridBackground />
+      <div className="container relative z-10 mx-auto px-6 md:px-12">
         <div className="flex flex-col items-center justify-center text-center max-w-5xl mx-auto space-y-12">
           
           <div className="space-y-10 w-full">
