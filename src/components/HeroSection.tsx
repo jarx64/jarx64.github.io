@@ -705,7 +705,7 @@ const HeroSection = () => {
               <h1
                 ref={introHeadingRef}
                 aria-label="Jahangir Alam Rocky"
-                className="invisible text-balance text-5xl font-bold leading-[0.92] tracking-tighter text-foreground opacity-0 sm:text-6xl md:text-8xl"
+                className="invisible whitespace-nowrap text-[clamp(1.75rem,8.5vw,3rem)] font-bold leading-[0.92] tracking-tighter text-foreground opacity-0 sm:text-6xl md:text-8xl"
               >
                 <span ref={introAtRef} aria-hidden="true" className="invisible hidden text-primary">
                   @
